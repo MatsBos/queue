@@ -1,0 +1,33 @@
+<main>
+
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Source Manager
+        </h2>
+        <button mat-fab extended (click)="addSource()">
+            <mat-icon>add</mat-icon>
+            Add Source
+        </button>
+    </div>
+
+
+    <ul role="list" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        @for (sourceItem of sourceList(); track $index) {
+        <li class="rounded-md p-2 text-center items-center flex justify-between text-2xl"
+            [style.background-color]="sourceItem.colorHex" [style.color]="sourceItem.colorHex | contrastTextColor">
+            {{sourceItem.name}}
+
+            <div>
+                <button mat-icon-button [style.color]="sourceItem.colorHex | contrastTextColor"
+                    (click)="deleteSource(sourceItem.id!)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+
+                <button mat-icon-button [style.color]="sourceItem.colorHex | contrastTextColor"
+                    (click)="editSource(sourceItem)">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </div>
+        </li>
+        }
+    </ul>
+</main>

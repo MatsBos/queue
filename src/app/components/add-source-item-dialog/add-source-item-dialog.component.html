@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Create Source</h2>
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="sourceItemForm" class="flex flex-col">
+        <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input formControlName="name" matInput placeholder="Ex. LSM Gold" value="Sushi">
+        </mat-form-field>
+
+        <color-chrome className="chrome-picker" [color]="sourceItemForm.get('colorHex')?.value || '#ffffff'"
+            (onChangeComplete)="colorChange($event)"></color-chrome>
+
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button type="button" mat-button mat-dialog-close>Cancel</button>
+    <button type="button" mat-button (click)="close()" cdkFocusInitial>Save</button>
+</mat-dialog-actions>

@@ -1,0 +1,64 @@
+<main>
+
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Salvo Manager
+        </h2>
+        <button mat-fab extended (click)="toggleLocked()">
+            <mat-icon> {{ locked() ? 'lock' : 'lock_open' }}
+            </mat-icon>
+            {{ locked() ? 'unlock' : 'lock' }}
+
+        </button>
+    </div>
+
+
+    <div class="flex justify-between gap-4">
+
+        @if (!locked()) {
+        <div class="drag-container">
+            <h2>Source list</h2>
+
+            <div cdkDropList [cdkDropListData]="sourceList()" [cdkDropListConnectedTo]="[salvoDropList]"
+                cdkDropListSortingDisabled cdkDropListHasAnchor class="drag-list">
+                @for (sourceItem of sourceList(); track $index) {
+                <div [style.background-color]="sourceItem.colorHex"
+                    [style.color]="sourceItem.colorHex | contrastTextColor" class="drag-box" cdkDrag
+                    [cdkDragData]="sourceItem">{{sourceItem.name}}</div>
+                }
+            </div>
+        </div>
+        }
+
+        <div cdkScrollable class="drag-container">
+
+            <div cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()" class="drag-list"
+                (cdkDropListDropped)="drop($event)">
+                @for (salvoItem of salvoList(); track $index) {
+                <div (click)="locked() && toggleSalvoDone(salvoItem)" [class.grayed-out]="salvoItem.done"
+                    [style.background-color]="salvoItem.sourceItem?.colorHex"
+                    [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor" class="drag-box"
+                    cdkDrag [cdkDragDisabled]="locked()">
+                    <h2>
+                        {{ (salvoItem.order ?? 0) + 1 }}
+                    </h2>
+                    <h1>
+                        {{salvoItem.sourceItem?.name}}
+                    </h1>
+                    <h2>
+                        @if (locked()) {
+                        <mat-slide-toggle (click)="$event.stopPropagation()" (toggleChange)="toggleSalvoDone(salvoItem)"
+                            [checked]="salvoItem.done"></mat-slide-toggle>
+                        }@else {
+                        <button mat-icon-button (click)="deleteSalvoItem(salvoItem.id!)">
+                            <mat-icon
+                                [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor">delete</mat-icon>
+                        </button> }
+                    </h2>
+                </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+</main>
