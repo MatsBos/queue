@@ -25,42 +25,44 @@ export class IndexedDbService {
     db.sourceList.update(id, updates);
   }
 
-  async getSalvoItems(): Promise<SalvoItem[]> {
-    await this.normalizeOrder();
+  async getSalvoItemsWithSource(): Promise<SalvoItem[]> {
+    return await db.salvoList.orderBy('order').toArray();
+  }
 
-    return db.salvoList.orderBy('order').toArray();
+  async getSalvoItem(id: number): Promise<SalvoItem | undefined> {
+    return await db.salvoList.get(id);
   }
 
   async addSalvoItem(item: SalvoItem): Promise<number> {
     return await db.salvoList.add(item);
   }
 
+  async deleteSalvoItem(id: number): Promise<void> {
+    await db.salvoList.delete(id);
+  }
+
   updateSalvoItem(id: number, updates: Partial<SalvoItem>): void {
     db.salvoList.update(id, updates);
   }
 
-  deleteSalvoItem(id: number): void {
-    db.salvoList.delete(id);
+  async updateSalvoItemOrder(items: SalvoItem[]): Promise<void> {
+    await db.transaction('rw', db.salvoList, async () => {
+      for (const item of items) {
+        await db.salvoList.update(item.id!, { order: item.order });
+      }
+    });
   }
 
   // ───── Foreign Key Helper ─────
-  async getSalvoItemsWithSource(): Promise<SalvoItem[]> {
-    const salvos = await this.getSalvoItems();
+  // async getSalvoItemsWithSource(): Promise<SalvoItem[]> {
+  //   const salvos = await this.getSalvoItems();
 
-    // Manually join with related SourceItem
-    return Promise.all(
-      salvos.map(async (salvo) => {
-        const sourceItem = await db.sourceList.get(salvo.sourceItemId);
-        return { ...salvo, sourceItem };
-      })
-    );
-  }
-
-  private async normalizeOrder(): Promise<void> {
-    await db.transaction('rw', db.salvoList, async () => {
-      (await db.salvoList.orderBy('order').toArray()).forEach((item, index) => {
-        db.salvoList.update(item.id!, { order: index });
-      });
-    });
-  }
+  //   // Manually join with related SourceItem
+  //   return Promise.all(
+  //     salvos.map(async (salvo) => {
+  //       const sourceItem = await db.sourceList.get(salvo.sourceItemId);
+  //       return { ...salvo, sourceItem };
+  //     })
+  //   );
+  // }
 }
