@@ -10,12 +10,14 @@
     </div>
 
 
-    <ul role="list" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <ul role="list" class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         @for (sourceItem of sourceList(); track $index) {
-        <li class="rounded-md p-2 text-center items-center flex justify-between text-2xl"
+        <li class="rounded-md p-2 text-center items-center flex text-2xl border border-white"
+            [class]="sourceItem.isBreak ? 'justify-center':'justify-between'"
             [style.background-color]="sourceItem.colorHex" [style.color]="sourceItem.colorHex | contrastTextColor">
             {{sourceItem.name}}
 
+            @if (!sourceItem.isBreak) {
             <div>
                 <button mat-icon-button [style.color]="sourceItem.colorHex | contrastTextColor"
                     (click)="deleteSource(sourceItem.id!)">
@@ -27,6 +29,7 @@
                     <mat-icon>edit</mat-icon>
                 </button>
             </div>
+            }
         </li>
         }
     </ul>

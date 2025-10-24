@@ -4,8 +4,6 @@
   align-items: start;
   flex-grow: 1;
   gap: 5px;
-  overflow: auto;
-  /* height: 700px; */
 }
 
 .drag-list {
@@ -16,6 +14,7 @@
   border-radius: 4px;
   overflow: hidden;
   display: block;
+  overflow: auto;
 }
 
 .drag-box {
@@ -29,7 +28,7 @@
   box-sizing: border-box;
   cursor: move;
   background: white;
-  font-size: 14px;
+  font-size: 18px;
   font-family: sans-serif;
 }
 

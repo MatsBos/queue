@@ -33,8 +33,13 @@ export class AppDB extends Dexie {
         colorHex: '#FF0000',
       },
       {
-        name: 'LSM Gray',
-        colorHex: '#808080',
+        name: 'LSM Blue',
+        colorHex: '#0000FF',
+      },
+      {
+        name: '--- Break ---',
+        colorHex: '#000000',
+        isBreak: true,
       },
     ]);
   }

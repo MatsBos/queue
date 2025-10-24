@@ -11,6 +11,7 @@ import {
   moveItemInArray,
   CdkDrag,
   CdkDropList,
+  copyArrayItem,
 } from '@angular/cdk/drag-drop';
 import { SalvoItem } from '../../interfaces/salvo-item';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -39,7 +40,7 @@ export class SalvoListComponent {
   );
 
   private salvoListObs$ = liveQuery(async () => {
-    const salvos = await this.indexedDBService.getSalvoItemsWithSource();
+    const salvos = await this.indexedDBService.getSalvoItems();
     const sources = await this.indexedDBService.getSourceItems();
     return salvos.map((s) => ({
       ...s,
@@ -58,41 +59,42 @@ export class SalvoListComponent {
   locked = signal<boolean>(false);
 
   async drop(event: CdkDragDrop<any[]>) {
+    const previousList = event.previousContainer.data;
+    const currentList = event.container.data;
+
+    const item = event.previousContainer.data[event.previousIndex];
+
+    // If same list, just apply new sort
     if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
+      moveItemInArray(currentList, event.previousIndex, event.currentIndex);
+    } else {
+      copyArrayItem(
+        previousList,
+        currentList,
         event.previousIndex,
         event.currentIndex
       );
 
-      await this.updateOrder(event.container.data);
-    } else {
-      const item = event.previousContainer.data[event.previousIndex];
-
-      const newItem = {
+      await this.indexedDBService.addSalvoItem({
         sourceItemId: item.id!,
         order: event.currentIndex,
-        sourceItem: item,
         done: false,
-      };
-
-      await this.indexedDBService.addSalvoItem(newItem);
+      });
     }
+
+    const currentListUpdates = currentList.map((item, index) => ({
+      id: item.id,
+      sort: index,
+      sourceItemId: item.id,
+      sourceItem: item,
+      done: item.done,
+    })) as SalvoItem[];
+
+    await this.indexedDBService.updateSalvoItemOrder(currentListUpdates);
   }
 
   deleteSalvoItem(id: number) {
     this.indexedDBService.deleteSalvoItem(id);
-  }
-
-  private async updateOrder(items: any[]) {
-    // reindex in-memory first
-    const updatedItems = items.map((item, index) => ({
-      ...item,
-      order: index,
-    }));
-
-    // batch update order field in DB
-    await this.indexedDBService.updateSalvoItemOrder(updatedItems);
   }
 
   toggleSalvoDone(item: SalvoItem) {

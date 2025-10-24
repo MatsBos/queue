@@ -1,4 +1,4 @@
-<main>
+<main class="page-wrapper">
 
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Salvo Manager
@@ -12,27 +12,34 @@
     </div>
 
 
-    <div class="flex justify-between gap-4">
+    <div class="flex justify-between flex-col sm:flex-row gap-4">
 
         @if (!locked()) {
         <div class="drag-container">
             <h2>Source list</h2>
 
             <div cdkDropList [cdkDropListData]="sourceList()" [cdkDropListConnectedTo]="[salvoDropList]"
-                cdkDropListSortingDisabled cdkDropListHasAnchor class="drag-list">
+                cdkDropListSortingDisabled cdkDropListHasAnchor class="drag-list ">
                 @for (sourceItem of sourceList(); track $index) {
                 <div [style.background-color]="sourceItem.colorHex"
                     [style.color]="sourceItem.colorHex | contrastTextColor" class="drag-box" cdkDrag
-                    [cdkDragData]="sourceItem">{{sourceItem.name}}</div>
+                    [cdkDragData]="sourceItem">
+                    <div></div>
+                    {{sourceItem.name}}
+                    <div></div>
+                </div>
                 }
             </div>
         </div>
         }
 
         <div cdkScrollable class="drag-container">
+            @if(!locked()){
+            <h2>Salvo list</h2>
+            }
 
-            <div cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()" class="drag-list"
-                (cdkDropListDropped)="drop($event)">
+            <div cdkScrollable cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()"
+                class="drag-list" (cdkDropListDropped)="drop($event)">
                 @for (salvoItem of salvoList(); track $index) {
                 <div (click)="locked() && toggleSalvoDone(salvoItem)" [class.grayed-out]="salvoItem.done"
                     [style.background-color]="salvoItem.sourceItem?.colorHex"

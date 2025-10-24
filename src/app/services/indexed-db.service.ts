@@ -15,17 +15,19 @@ export class IndexedDbService {
     return db.sourceList.toArray();
   }
 
-  deleteSourceItem(id: number): void {
-    db.sourceList.delete(id);
+  async deleteSourceItem(id: number): Promise<void> {
+    await db.sourceList.delete(id);
 
-    db.salvoList.where('sourceItemId').equals(id).delete();
+    await db.salvoList.where('sourceItemId').equals(id).delete();
+
+    this.updateSalvoItemOrder(await this.getSalvoItems());
   }
 
   updateSourceItem(id: number, updates: Partial<SourceItem>): void {
     db.sourceList.update(id, updates);
   }
 
-  async getSalvoItemsWithSource(): Promise<SalvoItem[]> {
+  async getSalvoItems(): Promise<SalvoItem[]> {
     return await db.salvoList.orderBy('order').toArray();
   }
 
@@ -39,6 +41,8 @@ export class IndexedDbService {
 
   async deleteSalvoItem(id: number): Promise<void> {
     await db.salvoList.delete(id);
+
+    this.updateSalvoItemOrder(await this.getSalvoItems());
   }
 
   updateSalvoItem(id: number, updates: Partial<SalvoItem>): void {
@@ -46,8 +50,13 @@ export class IndexedDbService {
   }
 
   async updateSalvoItemOrder(items: SalvoItem[]): Promise<void> {
+    const updatedItems = items.map((item, index) => ({
+      ...item,
+      order: index,
+    })) as SalvoItem[];
+
     await db.transaction('rw', db.salvoList, async () => {
-      for (const item of items) {
+      for (const item of updatedItems) {
         await db.salvoList.update(item.id!, { order: item.order });
       }
     });

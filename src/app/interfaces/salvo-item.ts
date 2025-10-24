@@ -9,4 +9,5 @@ export interface SalvoItem {
   done: boolean;
   sourceItem?: SourceItem;
   salvoGroup?: SalvoGroup;
+  isBreakpoint?: boolean;
 }
