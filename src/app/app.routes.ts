@@ -11,5 +11,4 @@ export const routes: Routes = [
     path: 'list',
     component: SalvoListComponent,
   },
-  { path: '**', redirectTo: '/' },
 ];
