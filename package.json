@@ -21,6 +21,7 @@
     "@angular/router": "^19.2.0",
     "@angular/service-worker": "^19.2.0",
     "@tailwindcss/postcss": "^4.1.15",
+    "angular-cli-ghpages": "^2.0.3",
     "dexie": "^4.2.1",
     "ngx-color": "^10.1.0",
     "postcss": "^8.5.6",
