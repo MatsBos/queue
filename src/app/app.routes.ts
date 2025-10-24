@@ -4,7 +4,7 @@ import { SalvoListComponent } from './pages/salvo-list/salvo-list.component';
 
 export const routes: Routes = [
   {
-    path: '/',
+    path: '',
     component: SourceManagerComponent,
   },
   {
