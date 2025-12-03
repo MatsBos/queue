@@ -4,7 +4,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { ContrastTextColorPipe } from '../../pipes/contrast-text-color.pipe';
 import { SourceItem } from '../../interfaces/source-item';
 import { toSignal } from '@angular/core/rxjs-interop';
-
 import { IndexedDbService } from '../../services/indexed-db.service';
 import {
   CdkDragDrop,
@@ -17,6 +16,10 @@ import { SalvoItem } from '../../interfaces/salvo-item';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { liveQuery } from 'dexie';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { AddSourceItemDialogComponent } from '../../components/add-source-item-dialog/add-source-item-dialog.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-salvo-list',
@@ -28,16 +31,22 @@ import { liveQuery } from 'dexie';
     CdkDrag,
     MatSlideToggleModule,
     CdkScrollable,
+    MatSnackBarModule,
+    MatToolbarModule,
   ],
   templateUrl: './salvo-list.component.html',
   styleUrl: './salvo-list.component.css',
 })
-export class SalvoListComponent {
+export class SalvoListComponent implements OnInit {
   readonly indexedDBService = inject(IndexedDbService);
+  private _snackBar = inject(MatSnackBar);
+  readonly dialog = inject(MatDialog);
 
-  private sourceListObs$ = liveQuery<SourceItem[]>(
-    async () => await this.indexedDBService.getSourceItems()
-  );
+  // private sourceListObs$ = liveQuery<SourceItem[]>(
+  //   async () => await this.indexedDBService.getSourceItems()
+  // );
+
+  sourceList = signal<SourceItem[]>([]);
 
   private salvoListObs$ = liveQuery(async () => {
     const salvos = await this.indexedDBService.getSalvoItems();
@@ -48,9 +57,13 @@ export class SalvoListComponent {
     }));
   });
 
-  sourceList = toSignal(this.sourceListObs$, {
-    initialValue: [],
-  }) as Signal<SourceItem[]>;
+  async ngOnInit(): Promise<void> {
+    this.sourceList.set(await this.indexedDBService.getSourceItems());
+  }
+
+  // sourceList = toSignal(this.sourceListObs$, {
+  //   initialValue: [],
+  // }) as Signal<SourceItem[]>;
 
   salvoList = toSignal(this.salvoListObs$, {
     initialValue: [],
@@ -91,6 +104,22 @@ export class SalvoListComponent {
     })) as SalvoItem[];
 
     await this.indexedDBService.updateSalvoItemOrder(currentListUpdates);
+
+    this._snackBar.open('Salvo added', '', {
+      duration: 1000,
+    });
+  }
+
+  async tapSourceItem(item: SourceItem) {
+    await this.indexedDBService.addSalvoItem({
+      sourceItemId: item.id!,
+      order: this.salvoList().length,
+      done: false,
+    });
+
+    this._snackBar.open('Salvo added', '', {
+      duration: 1000,
+    });
   }
 
   deleteSalvoItem(id: number) {
@@ -104,5 +133,39 @@ export class SalvoListComponent {
 
   toggleLocked() {
     this.locked.set(!this.locked());
+  }
+
+  addSource(): void {
+    const dialogRef = this.dialog.open(AddSourceItemDialogComponent);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.indexedDBService.addSourceItem(result as SourceItem);
+      this.indexedDBService.getSourceItems().then((items) => {
+        this.sourceList.set(items);
+      });
+    });
+  }
+
+  editSource(item: SourceItem): void {
+    const dialogRef = this.dialog.open(AddSourceItemDialogComponent, {
+      data: item,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.indexedDBService.updateSourceItem(
+        item.id as number,
+        result as Partial<SourceItem>
+      );
+      this.indexedDBService.getSourceItems().then((items) => {
+        this.sourceList.set(items);
+      });
+    });
+  }
+
+  deleteSource(id: number): void {
+    this.indexedDBService.deleteSourceItem(id);
+    this.indexedDBService.getSourceItems().then((items) => {
+      this.sourceList.set(items);
+    });
   }
 }

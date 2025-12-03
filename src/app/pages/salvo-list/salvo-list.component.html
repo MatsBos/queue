@@ -1,3 +1,9 @@
+@if (!locked()) {
+<mat-toolbar color="primary" class="flex flex-row justify-between">
+    <h1>queue</h1>
+</mat-toolbar>
+}
+
 <main class="page-wrapper">
 
     <div class="flex justify-between items-center mb-4">
@@ -12,43 +18,63 @@
     </div>
 
 
-    <div class="flex justify-between flex-col sm:flex-row gap-4">
+    <div class="flex justify-between flex-col-reverse gap-4">
 
         @if (!locked()) {
-        <div class="drag-container">
-            <h2>Source list</h2>
+        <div>
 
-            <div cdkDropList [cdkDropListData]="sourceList()" [cdkDropListConnectedTo]="[salvoDropList]"
-                cdkDropListSortingDisabled cdkDropListHasAnchor class="drag-list ">
-                @for (sourceItem of sourceList(); track $index) {
-                <div [style.background-color]="sourceItem.colorHex"
-                    [style.color]="sourceItem.colorHex | contrastTextColor" class="drag-box" cdkDrag
-                    [cdkDragData]="sourceItem">
-                    <div></div>
-                    {{sourceItem.name}}
-                    <div></div>
-                </div>
-                }
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Source Manager
+                </h2>
+                <button mat-fab extended (click)="addSource()">
+                    <mat-icon>add</mat-icon>
+                    Add Source
+                </button>
             </div>
+
+            <ul role="list" class="flex gap-2 flex-wrap justify-center" cdkDropList [cdkDropListData]="sourceList()"
+                [cdkDropListConnectedTo]="[salvoDropList]">
+                @for (sourceItem of sourceList(); track $index) {
+                <li class="rounded-md p-2 text-center items-center flex text-2xl border min-w-52 text-nowrap border-white"
+                    [class]="sourceItem.isBreak ? 'justify-center':'justify-between'" cdkDrag [cdkDragData]="sourceItem"
+                    [style.background-color]="sourceItem.colorHex"
+                    [style.color]="sourceItem.colorHex | contrastTextColor" (click)="tapSourceItem(sourceItem)">
+                    {{sourceItem.name}}
+
+                    @if (!sourceItem.isBreak) {
+                    <div>
+                        <button mat-icon-button [style.color]="sourceItem.colorHex | contrastTextColor"
+                            (click)="deleteSource(sourceItem.id!);$event.stopPropagation();">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+
+                        <button mat-icon-button [style.color]="sourceItem.colorHex | contrastTextColor"
+                            (click)="editSource(sourceItem);$event.stopPropagation();">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </div>
+                    }
+                </li>
+                }
+            </ul>
         </div>
+
         }
 
         <div cdkScrollable class="drag-container">
-            @if(!locked()){
-            <h2>Salvo list</h2>
-            }
+
 
             <div cdkScrollable cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()"
                 class="drag-list" (cdkDropListDropped)="drop($event)">
                 @for (salvoItem of salvoList(); track $index) {
                 <div (click)="locked() && toggleSalvoDone(salvoItem)" [class.grayed-out]="salvoItem.done"
                     [style.background-color]="salvoItem.sourceItem?.colorHex"
-                    [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor" class="drag-box"
-                    cdkDrag [cdkDragDisabled]="locked()">
-                    <h2>
+                    [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor" class="drag-box "
+                    [class.h-12]="!locked()" cdkDrag [cdkDragDisabled]="locked()">
+                    <h1 [class.text-4xl]="locked()">
                         {{ (salvoItem.order ?? 0) + 1 }}
-                    </h2>
-                    <h1>
+                    </h1>
+                    <h1 [class.text-4xl]="locked()">
                         {{salvoItem.sourceItem?.name}}
                     </h1>
                     <h2>
