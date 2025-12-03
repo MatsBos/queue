@@ -18,8 +18,6 @@ import { Observable, map, shareReplay } from 'rxjs';
     MatSidenavModule,
     MatListModule,
     MatIconModule,
-    AsyncPipe,
-    RouterLink,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
