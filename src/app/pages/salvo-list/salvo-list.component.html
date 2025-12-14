@@ -4,28 +4,38 @@
 </mat-toolbar>
 }
 
-<main class="page-wrapper">
+<main class="page-wrapper ">
 
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Salvo Manager
         </h2>
-        <button mat-fab extended (click)="toggleLocked()">
-            <mat-icon> {{ locked() ? 'lock' : 'lock_open' }}
-            </mat-icon>
-            {{ locked() ? 'unlock' : 'lock' }}
 
-        </button>
+        <div class="flex gap-2">
+            @if (!locked()) {
+            <button mat-fab extended (click)="clearAllSalvos()">
+                <mat-icon>delete</mat-icon>
+                Clear all
+            </button>
+
+            }
+
+            <button mat-fab extended (click)="toggleLocked()">
+                <mat-icon> {{ locked() ? 'lock' : 'lock_open' }}
+                </mat-icon>
+                {{ locked() ? 'unlock' : 'lock' }}
+            </button>
+        </div>
     </div>
 
 
-    <div class="flex justify-between flex-col gap-4">
-
+    <div class="flex justify-between flex-col gap-4 ">
         <div cdkScrollable class="drag-container">
             <div cdkScrollable cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()"
                 class="drag-list" (cdkDropListDropped)="drop($event)">
                 @for (salvoItem of salvoList(); track $index) {
-                <div class="drag-box" [class.h-18]="salvoItem.isBreak" [class.h-12]="!locked()"
-                    [class.grayed-out]="salvoItem.done" [style.background-color]="salvoItem.sourceItem?.colorHex"
+                <div #salvoEl class="drag-box my-1 mx-4 py-5 px-2.5" [class.h-12]="!locked()"
+                    [ngClass]="salvoItem.isBreak ? 'h-28 mb-4' : 'mx-8'" [class.grayed-out]="salvoItem.done"
+                    [style.background-color]="salvoItem.sourceItem?.colorHex"
                     [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor"
                     (click)="locked() && toggleSalvoDone(salvoItem)" cdkDrag [cdkDragDisabled]="locked()">
                     <h1 [class.text-4xl]="locked()">
@@ -56,8 +66,7 @@
 
 
         @if (!locked()) {
-        <div>
-
+        <div class="mb-20">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Source Manager
                 </h2>

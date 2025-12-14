@@ -7,7 +7,6 @@ import { SalvoItem } from '../interfaces/salvo-item';
   providedIn: 'root',
 })
 export class IndexedDbService {
-  
   addSourceItem(item: SourceItem): void {
     db.sourceList.add(item);
   }
@@ -46,6 +45,9 @@ export class IndexedDbService {
     this.updateSalvoItemOrder(await this.getSalvoItems());
   }
 
+  async deleteAllSalvoItems(): Promise<void> {
+    await db.salvoList.clear();
+  }
   updateSalvoItem(id: number, updates: Partial<SalvoItem>): void {
     db.salvoList.update(id, updates);
   }

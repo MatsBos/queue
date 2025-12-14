@@ -5,16 +5,23 @@ import { SalvoGroup } from '../interfaces/salvo-group';
 
 export class AppDB extends Dexie {
   sourceList!: Table<SourceItem, number>;
-  salvoGroupList!: Table<SalvoGroup, number>;
+  // salvoGroupList!: Table<SalvoGroup, number>;
   salvoList!: Table<SalvoItem, number>;
 
   constructor() {
     super('queueDB');
-    this.version(3.1).stores({
-      sourceList: '++id',
-      salvoGroupList: '++id',
-      salvoList: '++id, sourceItemId, order',
-    });
+    this.version(4.2)
+      .stores({
+        sourceList: '++id',
+        // salvoGroupList: '++id',
+        salvoList: '++id, sourceItemId, order',
+      })
+      .upgrade(async (tx) => {
+        // Example: clear invalid data
+        await tx.table('sourceList').clear();
+        await tx.table('salvoList').clear();
+        this.populate();
+      });
     this.on('populate', () => this.populate());
   }
 
@@ -29,7 +36,6 @@ export class AppDB extends Dexie {
         name: 'LSM White',
         colorHex: '#FFFFFF',
         isBreak: false,
-
       },
       {
         name: 'LSM Red',
@@ -42,7 +48,7 @@ export class AppDB extends Dexie {
         isBreak: false,
       },
       {
-        name: 'Break',
+        name: 'BREAK',
         colorHex: '#000000',
         isBreak: true,
       },

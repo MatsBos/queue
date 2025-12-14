@@ -1,4 +1,14 @@
-import { Component, inject, OnInit, Signal, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  QueryList,
+  Signal,
+  signal,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ContrastTextColorPipe } from '../../pipes/contrast-text-color.pipe';
@@ -21,6 +31,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddSourceItemDialogComponent } from '../../components/add-source-item-dialog/add-source-item-dialog.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { LocalStorageService } from '../../services/local-storage.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-salvo-list',
@@ -34,6 +45,7 @@ import { LocalStorageService } from '../../services/local-storage.service';
     CdkScrollable,
     MatSnackBarModule,
     MatToolbarModule,
+    CommonModule,
   ],
   templateUrl: './salvo-list.component.html',
   styleUrl: './salvo-list.component.css',
@@ -43,6 +55,8 @@ export class SalvoListComponent implements OnInit {
   private localStorageService = inject(LocalStorageService);
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
+
+  @ViewChildren('salvoEl') salvoElements!: QueryList<ElementRef<HTMLElement>>;
 
   sourceList = signal<SourceItem[]>([]);
   locked = signal<boolean>(false);
@@ -86,7 +100,7 @@ export class SalvoListComponent implements OnInit {
         sourceItemId: item.id!,
         order: event.currentIndex,
         done: false,
-        isBreak: item.isBreak
+        isBreak: item.isBreak,
       });
     }
 
@@ -96,7 +110,7 @@ export class SalvoListComponent implements OnInit {
       sourceItemId: item.id,
       sourceItem: item,
       done: item.done,
-      isBreak: item.isBreak
+      isBreak: item.isBreak,
     })) as SalvoItem[];
 
     await this.indexedDBService.updateSalvoItemOrder(currentListUpdates);
@@ -111,11 +125,18 @@ export class SalvoListComponent implements OnInit {
       sourceItemId: item.id!,
       order: this.salvoList().length,
       done: false,
-      isBreak: item.isBreak
+      isBreak: item.isBreak,
     });
 
     this._snackBar.open('Salvo added', '', {
       duration: 1000,
+    });
+
+    queueMicrotask(() => {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
     });
   }
 
@@ -126,6 +147,16 @@ export class SalvoListComponent implements OnInit {
   toggleSalvoDone(item: SalvoItem) {
     item.done = !item.done;
     this.indexedDBService.updateSalvoItem(item.id!, { done: item.done });
+
+    queueMicrotask(() => {
+      const index = this.salvoList().indexOf(item);
+      const el = this.salvoElements.get(index)?.nativeElement;
+
+      el?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    });
   }
 
   toggleLocked() {
@@ -165,5 +196,9 @@ export class SalvoListComponent implements OnInit {
     this.indexedDBService.getSourceItems().then((items) => {
       this.sourceList.set(items);
     });
+  }
+
+  clearAllSalvos() {
+    this.indexedDBService.deleteAllSalvoItems();
   }
 }
