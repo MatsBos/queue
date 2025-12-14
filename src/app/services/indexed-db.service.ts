@@ -7,6 +7,7 @@ import { SalvoItem } from '../interfaces/salvo-item';
   providedIn: 'root',
 })
 export class IndexedDbService {
+  
   addSourceItem(item: SourceItem): void {
     db.sourceList.add(item);
   }

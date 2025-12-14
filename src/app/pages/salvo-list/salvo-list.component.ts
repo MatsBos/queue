@@ -20,6 +20,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { AddSourceItemDialogComponent } from '../../components/add-source-item-dialog/add-source-item-dialog.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { LocalStorageService } from '../../services/local-storage.service';
 
 @Component({
   selector: 'app-salvo-list',
@@ -39,6 +40,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 })
 export class SalvoListComponent implements OnInit {
   readonly indexedDBService = inject(IndexedDbService);
+  private localStorageService = inject(LocalStorageService);
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
 
@@ -47,6 +49,7 @@ export class SalvoListComponent implements OnInit {
   // );
 
   sourceList = signal<SourceItem[]>([]);
+  locked = signal<boolean>(false);
 
   private salvoListObs$ = liveQuery(async () => {
     const salvos = await this.indexedDBService.getSalvoItems();
@@ -58,6 +61,7 @@ export class SalvoListComponent implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
+    this.locked.set(this.localStorageService.isLocked);
     this.sourceList.set(await this.indexedDBService.getSourceItems());
   }
 
@@ -68,8 +72,6 @@ export class SalvoListComponent implements OnInit {
   salvoList = toSignal(this.salvoListObs$, {
     initialValue: [],
   }) as Signal<SalvoItem[]>;
-
-  locked = signal<boolean>(false);
 
   async drop(event: CdkDragDrop<any[]>) {
     const previousList = event.previousContainer.data;
@@ -85,7 +87,7 @@ export class SalvoListComponent implements OnInit {
         previousList,
         currentList,
         event.previousIndex,
-        event.currentIndex
+        event.currentIndex,
       );
 
       await this.indexedDBService.addSalvoItem({
@@ -133,6 +135,7 @@ export class SalvoListComponent implements OnInit {
 
   toggleLocked() {
     this.locked.set(!this.locked());
+    this.localStorageService.isLocked = this.locked();
   }
 
   addSource(): void {
@@ -154,7 +157,7 @@ export class SalvoListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       this.indexedDBService.updateSourceItem(
         item.id as number,
-        result as Partial<SourceItem>
+        result as Partial<SourceItem>,
       );
       this.indexedDBService.getSourceItems().then((items) => {
         this.sourceList.set(items);
