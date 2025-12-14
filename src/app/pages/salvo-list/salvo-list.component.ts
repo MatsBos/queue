@@ -44,10 +44,6 @@ export class SalvoListComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
 
-  // private sourceListObs$ = liveQuery<SourceItem[]>(
-  //   async () => await this.indexedDBService.getSourceItems()
-  // );
-
   sourceList = signal<SourceItem[]>([]);
   locked = signal<boolean>(false);
 
@@ -64,10 +60,6 @@ export class SalvoListComponent implements OnInit {
     this.locked.set(this.localStorageService.isLocked);
     this.sourceList.set(await this.indexedDBService.getSourceItems());
   }
-
-  // sourceList = toSignal(this.sourceListObs$, {
-  //   initialValue: [],
-  // }) as Signal<SourceItem[]>;
 
   salvoList = toSignal(this.salvoListObs$, {
     initialValue: [],
@@ -94,6 +86,7 @@ export class SalvoListComponent implements OnInit {
         sourceItemId: item.id!,
         order: event.currentIndex,
         done: false,
+        isBreak: item.isBreak
       });
     }
 
@@ -103,6 +96,7 @@ export class SalvoListComponent implements OnInit {
       sourceItemId: item.id,
       sourceItem: item,
       done: item.done,
+      isBreak: item.isBreak
     })) as SalvoItem[];
 
     await this.indexedDBService.updateSalvoItemOrder(currentListUpdates);
@@ -117,6 +111,7 @@ export class SalvoListComponent implements OnInit {
       sourceItemId: item.id!,
       order: this.salvoList().length,
       done: false,
+      isBreak: item.isBreak
     });
 
     this._snackBar.open('Salvo added', '', {

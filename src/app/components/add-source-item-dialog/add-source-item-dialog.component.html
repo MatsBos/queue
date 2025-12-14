@@ -9,6 +9,7 @@
         <color-chrome className="chrome-picker" [color]="sourceItemForm.get('colorHex')?.value || '#ffffff'"
             (onChangeComplete)="colorChange($event)"></color-chrome>
 
+        <mat-slide-toggle class="mt-4" labelPosition="before" formControlName="isBreak">isBreak?</mat-slide-toggle>
     </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

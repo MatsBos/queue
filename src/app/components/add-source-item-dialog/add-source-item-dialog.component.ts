@@ -17,9 +17,13 @@ import { MatInputModule } from '@angular/material/input';
 import { ColorChromeModule } from 'ngx-color/chrome';
 import { IndexedDbService } from '../../services/indexed-db.service';
 import { SourceItem } from '../../interfaces/source-item';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+
 
 @Component({
   selector: 'app-add-source-item-dialog',
+  templateUrl: './add-source-item-dialog.component.html',
+  styleUrl: './add-source-item-dialog.component.css',
   imports: [
     ReactiveFormsModule,
     MatDialogModule,
@@ -27,9 +31,8 @@ import { SourceItem } from '../../interfaces/source-item';
     MatFormFieldModule,
     MatInputModule,
     ColorChromeModule,
+    MatSlideToggle
   ],
-  templateUrl: './add-source-item-dialog.component.html',
-  styleUrl: './add-source-item-dialog.component.css',
 })
 export class AddSourceItemDialogComponent {
   readonly indexedDBService = inject(IndexedDbService);
@@ -43,6 +46,7 @@ export class AddSourceItemDialogComponent {
       this.sourceItemForm.setValue({
         name: this.sourceItem.name,
         colorHex: this.sourceItem.colorHex,
+        isBreak: this.sourceItem.isBreak
       });
     }
   }
@@ -50,6 +54,7 @@ export class AddSourceItemDialogComponent {
   sourceItemForm = this.formBuilder.group({
     name: ['', Validators.required],
     colorHex: new FormControl('#ffffff'),
+    isBreak: false,
   });
 
   colorChange(event: any) {

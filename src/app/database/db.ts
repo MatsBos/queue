@@ -23,21 +23,26 @@ export class AppDB extends Dexie {
       {
         name: 'LSM Gold',
         colorHex: '#FFD700',
+        isBreak: false,
       },
       {
         name: 'LSM White',
         colorHex: '#FFFFFF',
+        isBreak: false,
+
       },
       {
         name: 'LSM Red',
         colorHex: '#FF0000',
+        isBreak: false,
       },
       {
         name: 'LSM Blue',
         colorHex: '#0000FF',
+        isBreak: false,
       },
       {
-        name: '--- Break ---',
+        name: 'Break',
         colorHex: '#000000',
         isBreak: true,
       },
