@@ -26,12 +26,17 @@ import { SalvoItem } from '../../interfaces/salvo-item';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { liveQuery } from 'dexie';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import {
+  MatSnackBar,
+  MatSnackBarModule,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { AddSourceItemDialogComponent } from '../../components/add-source-item-dialog/add-source-item-dialog.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { CommonModule } from '@angular/common';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-salvo-list',
@@ -114,10 +119,6 @@ export class SalvoListComponent implements OnInit {
     })) as SalvoItem[];
 
     await this.indexedDBService.updateSalvoItemOrder(currentListUpdates);
-
-    this._snackBar.open('Salvo added', '', {
-      duration: 1000,
-    });
   }
 
   async tapSourceItem(item: SourceItem) {
@@ -130,6 +131,7 @@ export class SalvoListComponent implements OnInit {
 
     this._snackBar.open('Salvo added', '', {
       duration: 1000,
+      verticalPosition: 'top',
     });
 
     queueMicrotask(() => {
@@ -141,7 +143,17 @@ export class SalvoListComponent implements OnInit {
   }
 
   deleteSalvoItem(id: number) {
-    this.indexedDBService.deleteSalvoItem(id);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: "Are you sure you want to delete all salvo's?",
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (!confirmed) return;
+
+      this.indexedDBService.deleteSalvoItem(id);
+    });
   }
 
   toggleSalvoDone(item: SalvoItem) {
@@ -192,13 +204,33 @@ export class SalvoListComponent implements OnInit {
   }
 
   deleteSource(id: number): void {
-    this.indexedDBService.deleteSourceItem(id);
-    this.indexedDBService.getSourceItems().then((items) => {
-      this.sourceList.set(items);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure you want to delete this source?',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (!confirmed) return;
+
+      this.indexedDBService.deleteSourceItem(id);
+      this.indexedDBService.getSourceItems().then((items) => {
+        this.sourceList.set(items);
+      });
     });
   }
 
   clearAllSalvos() {
-    this.indexedDBService.deleteAllSalvoItems();
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: "Are you sure you want to delete all salvo's?",
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (!confirmed) return;
+
+      this.indexedDBService.deleteAllSalvoItems();
+    });
   }
 }

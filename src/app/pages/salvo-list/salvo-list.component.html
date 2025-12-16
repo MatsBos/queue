@@ -1,46 +1,33 @@
-@if (!locked()) {
-<mat-toolbar color="primary" class="flex flex-row justify-between">
-    <h1>queue</h1>
-</mat-toolbar>
-}
+<main class="h-full flex flex-col">
 
-<main class="page-wrapper ">
+    <div class="flex flex-col h-full">
+        <!-- <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Salvo Manager
+            </h2>
 
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Salvo Manager
-        </h2>
+            <div class="flex gap-2">
+                @if (!locked()) {
+                <button mat-fab extended (click)="clearAllSalvos()">
+                    <mat-icon>delete</mat-icon>
+                    Delete all
+                </button>
+                }
+            </div>
+        </div> -->
 
-        <div class="flex gap-2">
-            @if (!locked()) {
-            <button mat-fab extended (click)="clearAllSalvos()">
-                <mat-icon>delete</mat-icon>
-                Delete all
-            </button>
-            }
-
-            <button mat-fab extended (click)="toggleLocked()">
-                <mat-icon> {{ locked() ? 'lock' : 'lock_open' }}
-                </mat-icon>
-                {{ locked() ? 'unlock' : 'lock' }}
-            </button>
-        </div>
-    </div>
-
-
-    <div class="flex justify-between flex-col gap-4 ">
-        <div cdkScrollable class="drag-container">
+        <div cdkScrollable class="drag-container flex-1 overflow-y-auto">
             <div cdkScrollable cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()"
                 class="drag-list" (cdkDropListDropped)="drop($event)">
                 @for (salvoItem of salvoList(); track $index) {
-                <div #salvoEl class="drag-box my-1 mx-4 py-5 px-2.5" [class.h-12]="!locked()"
+                <div #salvoEl class="drag-box my-1 mx-4 py-5 px-2.5"
                     [ngClass]="salvoItem.isBreak ? 'h-28 mb-4' : 'mx-8'" [class.grayed-out]="salvoItem.done"
                     [style.background-color]="salvoItem.sourceItem?.colorHex"
                     [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor"
-                    (click)="locked() && toggleSalvoDone(salvoItem)" cdkDrag [cdkDragDisabled]="locked()">
+                    (click)="toggleSalvoDone(salvoItem)" cdkDrag [cdkDragDisabled]="locked()">
                     <h1 [class.text-4xl]="locked()">
                         {{ (salvoItem.order ?? 0) + 1 }}
                     </h1>
-                    <h1 [class.text-4xl]="locked()" [class.text-5xl]="salvoItem.isBreak">
+                    <h1 class="text-4xl" [class.text-5xl]="salvoItem.isBreak">
                         @if(salvoItem.isBreak){
                         --- {{salvoItem.sourceItem?.name}} ---
                         }
@@ -48,37 +35,40 @@
                         {{salvoItem.sourceItem?.name}}
                         }
                     </h1>
-                    <h2>
-                        @if (locked()) {
+                    <div class="flex justify-center items-center">
                         <mat-slide-toggle (click)="$event.stopPropagation()" (toggleChange)="toggleSalvoDone(salvoItem)"
                             [checked]="salvoItem.done"></mat-slide-toggle>
-                        }@else {
-                        <button mat-icon-button (click)="deleteSalvoItem(salvoItem.id!)">
+                        <button mat-icon-button (click)="$event.stopPropagation();deleteSalvoItem(salvoItem.id!)">
                             <mat-icon
                                 [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor">delete</mat-icon>
-                        </button> }
-                    </h2>
+                        </button>
+                    </div>
                 </div>
                 }
             </div>
         </div>
 
 
-        @if (!locked()) {
-        <div class="mb-20">
+        <div class="border-t border-white/20 bg-slate-900 px-4 py-4">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Source Manager
                 </h2>
-                <button mat-fab extended (click)="addSource()">
-                    <mat-icon>add</mat-icon>
-                    Add Source
-                </button>
+                <div class="flex gap-2">
+                    <button mat-fab extended (click)="clearAllSalvos()">
+                        <mat-icon>delete</mat-icon>
+                        Delete all
+                    </button>
+                    <button mat-fab extended (click)="addSource()">
+                        <mat-icon>add</mat-icon>
+                        Add Source
+                    </button>
+                </div>
             </div>
 
             <ul role="list" class="flex gap-2 flex-wrap justify-center" cdkDropList [cdkDropListData]="sourceList()"
                 [cdkDropListConnectedTo]="[salvoDropList]">
                 @for (sourceItem of sourceList(); track $index) {
-                <li class="rounded-md p-2 text-center items-center flex text-2xl border min-w-52 text-nowrap border-white"
+                <li class="rounded-md p-2 text-center items-center flex border text-nowrap border-white"
                     [class]="sourceItem.isBreak ? 'justify-center':'justify-between'" cdkDrag [cdkDragData]="sourceItem"
                     [style.background-color]="sourceItem.colorHex"
                     [style.color]="sourceItem.colorHex | contrastTextColor" (click)="tapSourceItem(sourceItem)">
@@ -89,7 +79,7 @@
                     {{sourceItem.name}}
                     }
 
-                    <div>
+                    <div class="flex gap-0">
                         <button mat-icon-button [style.color]="sourceItem.colorHex | contrastTextColor"
                             (click)="deleteSource(sourceItem.id!);$event.stopPropagation();">
                             <mat-icon>delete</mat-icon>
@@ -104,7 +94,7 @@
                 }
             </ul>
         </div>
-        }
+
     </div>
 
 </main>
