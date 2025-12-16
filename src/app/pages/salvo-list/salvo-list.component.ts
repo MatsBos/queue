@@ -145,7 +145,7 @@ export class SalvoListComponent implements OnInit {
   deleteSalvoItem(id: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        message: 'Are you sure you want to delete all salvo?',
+        message: 'Are you sure you want to delete this salvo?',
       },
     });
 
