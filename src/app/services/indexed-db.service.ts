@@ -48,6 +48,11 @@ export class IndexedDbService {
   async deleteAllSalvoItems(): Promise<void> {
     await db.salvoList.clear();
   }
+
+  async deleteAllSourceItems(): Promise<void> {
+    await db.sourceList.clear();
+  }
+
   updateSalvoItem(id: number, updates: Partial<SalvoItem>): void {
     db.salvoList.update(id, updates);
   }

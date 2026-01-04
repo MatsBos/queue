@@ -65,6 +65,7 @@ export class SalvoListComponent implements OnInit {
 
   sourceList = signal<SourceItem[]>([]);
   locked = signal<boolean>(false);
+  editSourceMode = signal<boolean>(false);
 
   private salvoListObs$ = liveQuery(async () => {
     const salvos = await this.indexedDBService.getSalvoItems();
@@ -143,17 +144,17 @@ export class SalvoListComponent implements OnInit {
   }
 
   deleteSalvoItem(id: number) {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        message: 'Are you sure you want to delete this salvo?',
-      },
-    });
+    // const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    //   data: {
+    //     message: 'Are you sure you want to delete this salvo?',
+    //   },
+    // });
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (!confirmed) return;
+    // dialogRef.afterClosed().subscribe((confirmed) => {
+    //   if (!confirmed) return;
 
-      this.indexedDBService.deleteSalvoItem(id);
-    });
+    this.indexedDBService.deleteSalvoItem(id);
+    // });
   }
 
   toggleSalvoDone(item: SalvoItem) {
@@ -201,6 +202,8 @@ export class SalvoListComponent implements OnInit {
         this.sourceList.set(items);
       });
     });
+
+    this.editSourceMode.set(false);
   }
 
   deleteSource(id: number): void {
@@ -218,6 +221,7 @@ export class SalvoListComponent implements OnInit {
         this.sourceList.set(items);
       });
     });
+    this.editSourceMode.set(false);
   }
 
   clearAllSalvos() {
@@ -231,6 +235,38 @@ export class SalvoListComponent implements OnInit {
       if (!confirmed) return;
 
       this.indexedDBService.deleteAllSalvoItems();
+    });
+  }
+
+  clearAllSources() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure you want to delete all sources?',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (!confirmed) return;
+
+      this.indexedDBService.deleteAllSourceItems();
+    });
+  }
+
+  selectNext() {
+    const nextItem = this.salvoList().find((item) => !item.done);
+    if (!nextItem) return;
+    this.indexedDBService.updateSalvoItem(nextItem.id!, {
+      done: !nextItem.done,
+    });
+
+    queueMicrotask(() => {
+      const index = this.salvoList().indexOf(nextItem);
+      const el = this.salvoElements.get(index)?.nativeElement;
+
+      el?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
     });
   }
 }

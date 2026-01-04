@@ -19,9 +19,8 @@
             <div cdkScrollable cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()"
                 class="drag-list" (cdkDropListDropped)="drop($event)">
                 @for (salvoItem of salvoList(); track $index) {
-                <div #salvoEl class="drag-box my-1 mx-4 py-5 px-2.5"
-                    [ngClass]="salvoItem.isBreak ? 'h-28 mb-4' : 'mx-8'" [class.grayed-out]="salvoItem.done"
-                    [style.background-color]="salvoItem.sourceItem?.colorHex"
+                <div #salvoEl class="drag-box my-1 mx-16 py-5 px-4" [ngClass]="salvoItem.isBreak ? 'h-28 mb-4' : 'mx-8'"
+                    [class.grayed-out]="salvoItem.done" [style.background-color]="salvoItem.sourceItem?.colorHex"
                     [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor"
                     (click)="toggleSalvoDone(salvoItem)" cdkDrag [cdkDragDisabled]="locked()">
                     <h1 [class.text-4xl]="locked()">
@@ -51,16 +50,30 @@
 
         <div class="border-t border-white/20 bg-slate-900 px-4 py-4">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Source Manager
-                </h2>
-                <div class="flex gap-2">
+                <div class="flex gap-2 items-center">
+                    <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Source Manager
+                    </h2>
                     <button mat-fab extended (click)="clearAllSalvos()">
                         <mat-icon>delete</mat-icon>
-                        Delete all
+                        Delete all salvo's
+                    </button>
+                    <button mat-fab extended (click)="clearAllSources()">
+                        <mat-icon>delete</mat-icon>
+                        Delete all sources
                     </button>
                     <button mat-fab extended (click)="addSource()">
                         <mat-icon>add</mat-icon>
                         Add Source
+                    </button>
+                    <button mat-fab extended (click)="editSourceMode.set(true)">
+                        <mat-icon>add</mat-icon>
+                        Eddit Source
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <button mat-fab extended (click)="selectNext()">
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                        Select next
                     </button>
                 </div>
             </div>
@@ -80,6 +93,7 @@
                     }
 
                     <div class="flex gap-0">
+                        @if (editSourceMode()) {
                         <button mat-icon-button [style.color]="sourceItem.colorHex | contrastTextColor"
                             (click)="deleteSource(sourceItem.id!);$event.stopPropagation();">
                             <mat-icon>delete</mat-icon>
@@ -89,6 +103,7 @@
                             (click)="editSource(sourceItem);$event.stopPropagation();">
                             <mat-icon>edit</mat-icon>
                         </button>
+                        }
                     </div>
                 </li>
                 }
