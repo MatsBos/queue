@@ -37,6 +37,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { MatSelectModule } from '@angular/material/select';
+import { SalvoDropdownComponent } from '../../components/salvo-dropdown/salvo-dropdown.component';
 
 @Component({
   selector: 'app-salvo-list',
@@ -51,6 +53,8 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
     MatSnackBarModule,
     MatToolbarModule,
     CommonModule,
+    MatSelectModule,
+    SalvoDropdownComponent,
   ],
   templateUrl: './salvo-list.component.html',
   styleUrl: './salvo-list.component.css',
@@ -268,5 +272,10 @@ export class SalvoListComponent implements OnInit {
         block: 'center',
       });
     });
+  }
+
+  dropDownValueChanges(value: string, salvoItem: SalvoItem) {
+    console.log('Selected value:', value);
+    this.indexedDBService.updateSalvoItem(salvoItem.id!, { extraInfo: value });
   }
 }

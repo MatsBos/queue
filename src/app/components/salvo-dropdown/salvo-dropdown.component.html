@@ -1,0 +1,28 @@
+<div class="relative inline-block text-left">
+    <!-- Trigger -->
+    <button type="button" (click)="open.set(!open())"
+        class="inline-flex w-full justify-center text-nowrap gap-x-1.5 rounded-md bg-white px-3 py-1 text-2xl font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50"
+        aria-haspopup="true" aria-expanded="{{ open() }}">
+        {{currentOption()}}
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-mr-1 size-5 text-gray-400">
+            <path
+                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                fill-rule="evenodd" clip-rule="evenodd" />
+        </svg>
+    </button>
+
+    @if (open()) {
+    <!-- Menu -->
+    <div
+        class="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition ease-out duration-100">
+        <div class="py-1">
+            @for (option of options; track $index) {
+            <a (click)="select(option)"
+                class="block px-4 py-2 text-sm text-nowrap text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                {{option.label}}
+            </a>
+            }
+        </div>
+    </div>
+    }
+</div>

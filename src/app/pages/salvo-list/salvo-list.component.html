@@ -23,9 +23,17 @@
                     [class.grayed-out]="salvoItem.done" [style.background-color]="salvoItem.sourceItem?.colorHex"
                     [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor"
                     (click)="toggleSalvoDone(salvoItem)" cdkDrag [cdkDragDisabled]="locked()">
-                    <h1 [class.text-4xl]="locked()">
-                        {{ (salvoItem.order ?? 0) + 1 }}
-                    </h1>
+                    <div class="flex items-center gap-10 max-w-20">
+                        <h1 [class.text-4xl]="locked()">
+                            {{ (salvoItem.order ?? 0) + 1 }}
+                        </h1>
+
+                        <app-salvo-dropdown class="mr-10"
+                            [currentOption]="salvoItem.extraInfo ? salvoItem.extraInfo : ''"
+                            (valueChange)="dropDownValueChanges($event, salvoItem)"
+                            (click)="$event.stopPropagation()"></app-salvo-dropdown>
+                    </div>
+
                     <h1 class="text-4xl" [class.text-5xl]="salvoItem.isBreak">
                         @if(salvoItem.isBreak){
                         --- {{salvoItem.sourceItem?.name}} ---
