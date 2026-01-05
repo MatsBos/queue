@@ -244,7 +244,8 @@ export class SalvoListComponent implements OnInit {
   clearAllSources() {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        message: 'Are you sure you want to delete all sources?',
+        message:
+          'Are you sure you want to delete all sources? (This also clears all salvos)',
       },
     });
 

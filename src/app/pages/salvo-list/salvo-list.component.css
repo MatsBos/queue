@@ -1,4 +1,4 @@
-.mat-toolbar.mat-primary {
+/* .mat-toolbar.mat-primary {
   position: sticky;
   top: 0;
   z-index: 1;
@@ -6,15 +6,6 @@
   background: var(--mat-sys-primary-container);
 }
 
-
-.drag-list {
-  /* width: 100%;
-  min-height: 60px;
-  border-radius: 10px;
-  overflow: hidden;
-  display: block;
-  overflow: auto; */
-}
 
 .drag-box {
   border-radius: 4px;
@@ -24,7 +15,6 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  /* cursor: move; */
   font-size: 18px;
   font-family: sans-serif;
 }
@@ -48,9 +38,9 @@
 .drag-list.cdk-drop-list-dragging .drag-box:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
-
+*/
 .grayed-out {
   opacity: 0.6;
   background: #414141 !important;
   color: black !important;
-}
+} 
