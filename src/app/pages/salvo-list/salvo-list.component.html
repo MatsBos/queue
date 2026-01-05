@@ -3,7 +3,7 @@
         <!-- Main Salvo List Area -->
         <div cdkScrollable class="drag-container flex-1 overflow-y-auto px-4 py-6">
             <div cdkScrollable cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()"
-                class="drag-list pb-10 max-w-6xl mx-auto" (cdkDropListDropped)="drop($event)">
+                class="drag-list pb-10 mx-auto" (cdkDropListDropped)="drop($event)">
                 @for (salvoItem of salvoList(); track $index) {
                 <div #salvoEl class="drag-box my-3 py-0 px-6 rounded-xl shadow-lg transition-all duration-300 "
                     [ngClass]="salvoItem.isBreak ? 'h-32 mb-6 border-2 border-dashed' : 'border border-white/10'"
@@ -63,7 +63,7 @@
             <div class="p-2 max-w-7xl mx-auto">
                 <!-- Header Row -->
                 <div class="flex justify-between items-center mb-6">
-                    <div class="flex gap-3 items-center flex-wrap">
+                    <div class="flex gap-1 items-center flex-wrap">
                         <h2 class="font-bold text-white  tracking-wide flex items-center gap-2">
                             Source Manager
                         </h2>
