@@ -1,7 +1,7 @@
 <div class="relative inline-block text-left">
     <!-- Trigger -->
     <button type="button" (click)="open.set(!open())"
-        class="inline-flex w-full justify-center items-center text-nowrap gap-x-1.5 rounded-lg bg-black/40 backdrop-blur-sm px-3 py-1 text-4xl font-semibold text-white shadow-lg border border-white/30 hover:bg-black/50 hover:border-white/50 transition-all duration-200"
+        class="inline-flex w-full uppercase justify-center items-center text-nowrap gap-x-1.5 rounded-lg bg-black/40 backdrop-blur-sm px-3 py-1 text-4xl font-semibold text-white shadow-lg border border-white/30 hover:bg-black/50 hover:border-white/50 transition-all duration-200"
         aria-haspopup="true" aria-expanded="{{ open() }}">
         {{currentOption()}}
         <svg fill="currentColor" aria-hidden="true" class="-mr-1 mt-1 size-6 opacity-70 text-white">
@@ -18,7 +18,7 @@
         <div class="py-1">
             @for (option of options; track $index) {
             <a (click)="select(option)"
-                class="block px-4 py-2 text-sm text-nowrap text-white rounded-lg mx-1 my-0.5 cursor-pointer transition-all duration-200 hover:bg-white/10">
+                class="uppercase block px-4 py-2 text-sm text-nowrap text-white rounded-lg mx-1 my-0.5 cursor-pointer transition-all duration-200 hover:bg-white/10">
                 {{option.label}}
             </a>
             }

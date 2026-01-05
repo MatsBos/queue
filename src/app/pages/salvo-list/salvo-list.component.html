@@ -5,7 +5,7 @@
             <div cdkScrollable cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()"
                 class="drag-list pb-10 mx-auto" (cdkDropListDropped)="drop($event)">
                 @for (salvoItem of salvoList(); track $index) {
-                <div #salvoEl class="drag-box my-3 py-0 px-6 rounded-xl shadow-lg transition-all duration-300 "
+                <div #salvoEl class="drag-box my-3 mx-20 py-1 px-6 rounded-xl shadow-lg transition-all duration-300 "
                     [ngClass]="salvoItem.isBreak ? 'h-32 mb-6 border-2 border-dashed' : 'border border-white/10'"
                     [class.grayed-out]="salvoItem.done"
                     [style.background-color]="salvoItem.sourceItem?.colorHex ? salvoItem.sourceItem?.colorHex + 'dd' : '#1e293bdd'"
