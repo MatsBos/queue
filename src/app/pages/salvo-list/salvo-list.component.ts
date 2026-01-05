@@ -67,7 +67,7 @@ export class SalvoListComponent implements OnInit {
 
   @ViewChildren('salvoEl') salvoElements!: QueryList<ElementRef<HTMLElement>>;
 
-  sourceList = signal<SourceItem[]>([]);
+  // sourceList = signal<SourceItem[]>([]);
   locked = signal<boolean>(false);
   editSourceMode = signal<boolean>(false);
 
@@ -80,14 +80,22 @@ export class SalvoListComponent implements OnInit {
     }));
   });
 
+  private sourceListObs$ = liveQuery(async () => {
+    const sources = await this.indexedDBService.getSourceItems();
+    return sources;
+  });
+
   async ngOnInit(): Promise<void> {
     this.locked.set(this.localStorageService.isLocked);
-    this.sourceList.set(await this.indexedDBService.getSourceItems());
   }
 
   salvoList = toSignal(this.salvoListObs$, {
     initialValue: [],
   }) as Signal<SalvoItem[]>;
+
+  sourceList = toSignal(this.sourceListObs$, {
+    initialValue: [],
+  }) as Signal<SourceItem[]>;
 
   async drop(event: CdkDragDrop<any[]>) {
     const previousList = event.previousContainer.data;
@@ -186,9 +194,6 @@ export class SalvoListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       this.indexedDBService.addSourceItem(result as SourceItem);
-      this.indexedDBService.getSourceItems().then((items) => {
-        this.sourceList.set(items);
-      });
     });
   }
 
@@ -202,9 +207,6 @@ export class SalvoListComponent implements OnInit {
         item.id as number,
         result as Partial<SourceItem>,
       );
-      this.indexedDBService.getSourceItems().then((items) => {
-        this.sourceList.set(items);
-      });
     });
 
     this.editSourceMode.set(false);
@@ -221,9 +223,6 @@ export class SalvoListComponent implements OnInit {
       if (!confirmed) return;
 
       this.indexedDBService.deleteSourceItem(id);
-      this.indexedDBService.getSourceItems().then((items) => {
-        this.sourceList.set(items);
-      });
     });
     this.editSourceMode.set(false);
   }
@@ -252,6 +251,7 @@ export class SalvoListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (!confirmed) return;
 
+      this.indexedDBService.deleteAllSalvoItems();
       this.indexedDBService.deleteAllSourceItems();
     });
   }

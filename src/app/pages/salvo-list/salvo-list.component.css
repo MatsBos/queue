@@ -8,12 +8,12 @@
 
 
 .drag-list {
-  width: 100%;
+  /* width: 100%;
   min-height: 60px;
   border-radius: 10px;
   overflow: hidden;
   display: block;
-  overflow: auto;
+  overflow: auto; */
 }
 
 .drag-box {

@@ -1,26 +1,12 @@
 <main class="h-full flex flex-col">
-
     <div class="flex flex-col h-full">
-        <!-- <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Salvo Manager
-            </h2>
-
-            <div class="flex gap-2">
-                @if (!locked()) {
-                <button mat-fab extended (click)="clearAllSalvos()">
-                    <mat-icon>delete</mat-icon>
-                    Delete all
-                </button>
-                }
-            </div>
-        </div> -->
-
         <div cdkScrollable class="drag-container flex-1 overflow-y-auto">
             <div cdkScrollable cdkDropList #salvoDropList="cdkDropList" [cdkDropListData]="salvoList()"
-                class="drag-list" (cdkDropListDropped)="drop($event)">
+                class="drag-list pb-10" (cdkDropListDropped)="drop($event)">
                 @for (salvoItem of salvoList(); track $index) {
-                <div #salvoEl class="drag-box my-1 mx-16 py-5 px-4" [ngClass]="salvoItem.isBreak ? 'h-28 mb-4' : 'mx-8'"
-                    [class.grayed-out]="salvoItem.done" [style.background-color]="salvoItem.sourceItem?.colorHex"
+                <div #salvoEl class="drag-box my-2 mx-16 py-0.5 px-4"
+                    [ngClass]="salvoItem.isBreak ? 'h-28 mb-4' : 'mx-20'" [class.grayed-out]="salvoItem.done"
+                    [style.background-color]="salvoItem.sourceItem?.colorHex"
                     [style.color]="salvoItem.sourceItem?.colorHex || '#000000' | contrastTextColor"
                     (click)="toggleSalvoDone(salvoItem)" cdkDrag [cdkDragDisabled]="locked()">
                     <div class="flex items-center gap-10 max-w-20">
@@ -34,7 +20,7 @@
                             (click)="$event.stopPropagation()"></app-salvo-dropdown>
                     </div>
 
-                    <h1 class="text-4xl" [class.text-5xl]="salvoItem.isBreak">
+                    <h1 class="text-7xl" [class.text-5xl]="salvoItem.isBreak">
                         @if(salvoItem.isBreak){
                         --- {{salvoItem.sourceItem?.name}} ---
                         }
@@ -55,31 +41,30 @@
             </div>
         </div>
 
-
-        <div class="border-t border-white/20 bg-slate-900 px-4 py-4">
+        <div class="border-t border-white/20 bg-slate-900 p-4">
             <div class="flex justify-between items-center mb-4">
                 <div class="flex gap-2 items-center">
-                    <h2 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">Source Manager
-                    </h2>
-                    <button mat-fab extended (click)="clearAllSalvos()">
+                    <h2 class="font-bold text-white sm:truncate">Source Manager</h2>
+                    <button matButton="outlined" (click)="clearAllSalvos()">
                         <mat-icon>delete</mat-icon>
                         Delete all salvo's
                     </button>
-                    <button mat-fab extended (click)="clearAllSources()">
+                    <button matButton="outlined" (click)="clearAllSources()">
                         <mat-icon>delete</mat-icon>
                         Delete all sources
                     </button>
-                    <button mat-fab extended (click)="addSource()">
+                    <button matButton="outlined" (click)="addSource()">
                         <mat-icon>add</mat-icon>
                         Add Source
                     </button>
-                    <button mat-fab extended (click)="editSourceMode.set(true)">
-                        <mat-icon>add</mat-icon>
-                        Eddit Source
+                    <button [matButton]="editSourceMode() ? 'filled':'outlined'"
+                        (click)="editSourceMode.set(!editSourceMode())">
+                        <mat-icon>edit</mat-icon>
+                        Edit Source
                     </button>
                 </div>
                 <div class="flex gap-2">
-                    <button mat-fab extended (click)="selectNext()">
+                    <button matButton="outlined" (click)="selectNext()">
                         <mat-icon>keyboard_arrow_down</mat-icon>
                         Select next
                     </button>
@@ -89,7 +74,7 @@
             <ul role="list" class="flex gap-2 flex-wrap justify-center" cdkDropList [cdkDropListData]="sourceList()"
                 [cdkDropListConnectedTo]="[salvoDropList]">
                 @for (sourceItem of sourceList(); track $index) {
-                <li class="rounded-md p-2 text-center items-center flex border text-nowrap border-white"
+                <li class="rounded-md p-2 text-center items-center cursor-pointer text-2xl flex border text-nowrap border-white"
                     [class]="sourceItem.isBreak ? 'justify-center':'justify-between'" cdkDrag [cdkDragData]="sourceItem"
                     [style.background-color]="sourceItem.colorHex"
                     [style.color]="sourceItem.colorHex | contrastTextColor" (click)="tapSourceItem(sourceItem)">
